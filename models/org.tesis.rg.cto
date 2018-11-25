@@ -1,0 +1,125 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
+namespace org.tesis.rg
+
+enum Pais {
+  o Argentina
+  o Uruguay
+  o Brasil
+  o Chile
+  o Paraguay
+  o Bolivia
+}
+
+enum Cargo {
+ o Titular
+ o Adjunto
+ o Suplente
+}
+
+participant Universidad identified by universidadId {
+  o String universidadId
+  o String nombre
+  o String direccion
+  o Pais pais
+  }
+
+asset Facultad identified by facultadId {
+ o String facultadId
+ o String nombre
+ --> Universidad universidad
+}
+
+asset Carrera identified by carreraId {
+ o String carreraId
+ o String CarreraNombre
+ --> Facultad facultad
+}
+
+asset Materia identified by materiaId {
+ o String materiaId
+ o String materiaNombre
+ --> Carrera[] carreras
+}
+
+abstract asset Persona identified by personaId {
+  o String personaId
+  o String personaNombre
+  o String PersonaApellido
+  o DateTime personaFechaNacimiento
+  o Pais paisNacimiento
+  o String legajo
+}
+
+asset Docente extends Persona {
+  --> MateriaDictada[] materiasDictadas
+}
+
+asset Alumno extends Persona {
+  --> MateriaCursada[] materiasCursadas 
+}
+
+abstract asset MateriaDictada {
+    --> Carrera carrera
+	--> Materia materia
+    o DateTime fechaInicio
+    o Cargo cargo
+}
+abstract asset MateriaCursada {
+    --> Carrera carrera
+	--> Materia materia
+    o DateTime fechaInscripcion
+    o Long nota
+}
+
+
+
+enum TipoInvestigador {
+	o Docente
+    o Alumno
+    o Tutor
+    o Cotutor
+}
+abstract asset Investigador extends Persona {
+  o TipoInvestigador tipo
+}
+enum TipoPublicacion {
+   o Revista
+   o Congreso
+}
+
+abstract concept LugarPublicacion {
+ o TipoPublicacion tipo
+ o String fombre
+ o DateTime fecha
+}
+
+asset Publicacion identified by publicacionId {
+  o String publicacionId
+  o String nombre
+  o String resumen
+  o String[] categorias
+  o LugarPublicacion[] publicaciones
+  --> Investigador[] investigadores
+}
+asset Investigacion identified by investigacionId {
+  o String investigacionId
+  o String nombre
+  o String resumen
+  o String[] categorias
+  o DateTime fechaInicio
+  o Boolean aprobada
+  --> Investigador[] investigadores
+  --> Publicacion[] publicaciones
+}
