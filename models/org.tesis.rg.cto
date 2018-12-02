@@ -28,6 +28,25 @@ enum Cargo {
  o Suplente
 }
 
+enum TipoPublicacion {
+   o Revista
+   o Congreso
+}
+
+
+enum TipoInvestigador {
+	o Docente
+  o Alumno
+  o Tutor
+  o Cotutor
+}
+
+abstract concept LugarPublicacion {
+ o TipoPublicacion tipo
+ o String Nombre
+ o DateTime fecha
+}
+
 participant Universidad identified by universidadId {
   o String universidadId
   o String nombre
@@ -62,56 +81,44 @@ abstract asset Persona identified by personaId {
   o String legajo
 }
 
+abstract asset MateriaDictada {
+    --> Carrera carrera
+	  --> Materia materia
+    o DateTime fechaInicio
+    o DateTime fechaFin
+    o Cargo cargo
+}
+
 asset Docente extends Persona {
   --> MateriaDictada[] materiasDictadas
 }
 
+abstract asset MateriaCursada {
+    --> Carrera carrera
+	  --> Materia materia
+    o DateTime fechaInscripcion
+    o DateTime fechaAprobado
+    o Long nota
+}
 asset Alumno extends Persona {
   --> MateriaCursada[] materiasCursadas 
 }
 
-abstract asset MateriaDictada {
-    --> Carrera carrera
-	--> Materia materia
-    o DateTime fechaInicio
-    o Cargo cargo
-}
-abstract asset MateriaCursada {
-    --> Carrera carrera
-	--> Materia materia
-    o DateTime fechaInscripcion
-    o Long nota
-}
-
-
-
-enum TipoInvestigador {
-	o Docente
-    o Alumno
-    o Tutor
-    o Cotutor
-}
 abstract asset Investigador extends Persona {
   o TipoInvestigador tipo
 }
-enum TipoPublicacion {
-   o Revista
-   o Congreso
-}
 
-abstract concept LugarPublicacion {
- o TipoPublicacion tipo
- o String fombre
- o DateTime fecha
+concept InvestigadorRol {
+  o String personaId
+  o TipoInvestigador tipo
 }
-
 asset Publicacion identified by publicacionId {
   o String publicacionId
   o String nombre
   o String resumen
   o String[] categorias
   o LugarPublicacion[] publicaciones
-  --> Investigador[] investigadores
+  o InvestigadorRol[] investigadores
 }
 asset Investigacion identified by investigacionId {
   o String investigacionId
@@ -119,7 +126,6 @@ asset Investigacion identified by investigacionId {
   o String resumen
   o String[] categorias
   o DateTime fechaInicio
-  o Boolean aprobada
-  --> Investigador[] investigadores
+  o InvestigadorRol[] investigadores
   --> Publicacion[] publicaciones
 }
